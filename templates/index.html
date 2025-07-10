@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aster CORE - Content Optimization & Response Engine</title>
+    <!-- Google Fonts for Roboto and Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Basic Reset & Box Sizing */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Base Body & HTML Styles */
+        html, body {
+            height: 100%; /* Ensure html and body take full viewport height */
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        body {
+            display: flex; /* Use flexbox for overall page layout */
+            flex-direction: column; /* Stack header, main content, and footer vertically */
+            background: linear-gradient(to bottom right, #f8f9fa, #e2e6e9); /* Softer, light gray gradient background */
+            font-size: 14px; /* Base font size adjusted for 100% zoom */
+            overflow-y: auto; /* Allow vertical scrolling for the entire body */
+        }
+
+        /* Accessibility: Visually hidden elements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+
+        /* General container for both header and main content */
+        .page-container {
+            margin: 0 auto;
+            padding: 0 0.8rem; /* Further reduced padding */
+            box-sizing: border-box;
+        }
+
+        /* Specific width for the header container */
+        .header-container {
+            width: 98vw;
+            max-width: 1400px; /* Further reduced max-width for header */
+        }
+
+        /* Specific width for the main content container */
+        .main-content-container {
+            width: 98vw;
+            max-width: 1800px; /* Further reduced max-width for overall content */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, #003366, #0056b3);
+            color: white;
+            padding: 0.7rem 0; /* Further reduced padding */
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18); /* Adjusted shadow */
+            transition: all 0.4s ease-out;
+        }
+
+        /* New style for scrolled header */
+        header.header-scrolled {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+            background: linear-gradient(to right, #002244, #004080);
+        }
+
+        header .page-container.header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: none;
+            padding: 0 0.8rem; /* keep your side-padding */
+        }
+
+        .header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem; /* Further reduced gap */
+        }
+
+        .header-logo {
+            height: 70px; /* Further reduced logo size */
+            border-radius: 7px; /* Further reduced border-radius */
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem; /* Further reduced spacing for titles */
+            text-align: center;
+        }
+
+        .title-main {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem; /* Further reduced main title font size */
+            letter-spacing: 0.05em; /* Further adjusted letter spacing */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+        }
+
+        .title-sub {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            font-size: 0.85rem; /* Further reduced sub title font size */
+            opacity: 0.85;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.08);
+        }
+
+        /* Main Content Area */
+        .main-wrapper {
+            flex-grow: 1;
+            padding: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: visible;
+            transform: none;
+            transform-origin: initial;
+        }
+        
+        main {
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            width: 100%;
+        }
+
+        /* Form Box and Input Styles */
+        .form-box {
+            background: white;
+            padding: 1.2rem; /* Further reduced padding */
+            border-radius: 12px; /* Further reduced rounded corners */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); /* Adjusted shadow */
+            width: 100%;
+            max-width: 800px; /* Adjusted max-width for better fit at 100% zoom */
+            margin-bottom: 1.2rem; /* Adjusted margin */
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem; /* Adjusted spacing between sections */
+        }
+
+        /* Adjust padding for the form-box itself for the landing page */
+        #main-form-box {
+            padding-top: 0.8rem; /* Adjusted top padding */
+            margin-top: 1.5rem; /* Adjusted top margin */
+        }
+
+        .form-box.expanded {
+            max-width: 1100px; /* Adjusted max-width for expanded view */
+        }
+
+        .form-section-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem; /* Further reduced font size */
+            font-weight: 700;
+            color: #003366;
+            margin-bottom: 0.6rem; /* Further adjusted margin */
+            text-align: center;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.5rem 0.7rem; /* Further adjusted padding */
+            border-radius: 7px; /* Further adjusted border-radius */
+            border: 1px solid #ddd;
+            font-size: 0.85rem; /* Further reduced font size */
+            background-color: #fcfcfc;
+            min-height: 80px; /* Adjusted min-height */
+            resize: vertical;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #0077b6;
+            box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.1); /* Adjusted shadow */
+            outline: none;
+        }
+
+        /* Card-based selection for Channel/BU */
+        .card-selection-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Further adjusted responsive columns */
+            justify-content: center;
+            gap: 12px; /* Further adjusted gap between cards */
+            margin-bottom: 15px; /* Further adjusted space below button group */
+        }
+
+        .selection-card {
+            background: linear-gradient(145deg, #f0f4f7, #e2eaf0);
+            border: 1px solid #D0D0D0;
+            border-radius: 8px; /* Further adjusted rounded */
+            padding: 12px 8px; /* Further adjusted padding */
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9rem; /* Further reduced font size */
+            font-weight: 600;
+            color: #444;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80px; /* Further adjusted height */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Adjusted initial shadow for cards */
+        }
+
+        /* Styling for Font Awesome icons within selection cards */
+        .selection-card .fas,
+        .selection-card .fab,
+        .selection-card .far { /* Apply styles to Font Awesome icons */
+            font-size: 28px; /* Set Font Awesome icon size */
+            margin-bottom: 4px; /* Adjusted margin */
+            color: #0077B6;
+            transition: color 0.3s ease;
+        }
+
+        .selection-card.selected .fas,
+        .selection-card.selected .fab,
+        .selection-card.selected .far {
+            color: white; /* Change icon color to white when selected */
+        }
+
+        .selection-card:hover:not(.selected) {
+            border-color: #0077B6;
+            box-shadow: 0 5px 12px rgba(0, 119, 182, 0.15);
+            transform: translateY(-3px) scale(1.01); /* Slightly less pronounced lift and scale */
+            background: linear-gradient(145deg, #eaf6fd, #d8effb);
+        }
+
+        .selection-card.selected {
+            background: linear-gradient(145deg, #4CAF50, #2E7D32);
+            color: white;
+            border-color: #2E7D32;
+            box-shadow: 0 7px 18px rgba(0, 0, 0, 0.25);
+            transform: translateY(-3px) scale(1.01);
+        }
+        .selection-card.selected svg {
+            filter: brightness(0) invert(1);
+        }
+
+        .selection-card.selected:hover {
+            background: linear-gradient(145deg, #2E7D32, #1B5E20);
+            border-color: #1B5E20;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Buttons and Checkbox Group */
+        .form-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem; /* Further adjusted gap */
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            margin-top: 0.7rem; /* Further adjusted margin */
+        }
+
+        /* Specific alignment for buttons on the second/third pages */
+        #feedback-analysis-section .form-actions {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 0.7rem;
+            margin-top: 0.7rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.7rem;
+            justify-content: center;
+            grid-column: 2;
+        }
+
+
+        .button {
+            padding: 7px 18px; /* Further adjusted padding */
+            color: white;
+            border: none;
+            border-radius: 5px; /* Further adjusted border-radius */
+            font-size: 0.85rem; /* Further reduced font size */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 70px; /* Further adjusted min-width */
+        }
+        .home-button {
+            background: #003366;
+            color: white;
+            padding: 5px 12px; /* Further adjusted padding */
+            border-radius: 3px; /* Further adjusted border-radius */
+            text-decoration: none;
+            font-size: 0.75rem; /* Further adjusted font size */
+            font-weight: 600;
+            margin-bottom: 0.7rem; /* Further adjusted margin */
+            display: inline-block;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .home-button:hover {
+            background: #004080;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 51, 102, 0.2);
+        }
+
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .button-analyze {
+            background: #0077B6;
+            box-shadow: 0 2px 4px rgba(0, 119, 182, 0.15);
+            padding: 8px 20px; /* Further adjusted padding */
+            font-size: 0.9rem; /* Further reduced font size */
+            border-radius: 6px; /* Further adjusted border-radius */
+        }
+
+        .button-analyze:not(:disabled):hover {
+            background: #005F99;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 119, 182, 0.25);
+        }
+
+        .button-reset {
+            background: #6C757D;
+            box-shadow: 0 2px 4px rgba(108, 117, 125, 0.15);
+        }
+
+        .button-reset:not(:disabled):hover {
+            background: #5A6268;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(108, 117, 125, 0.25);
+        }
+
+        /* Toggle Switch Styling */
+        .toggle-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            height: 24px; /* Further adjusted height */
+            margin-left: auto;
+            font-size: 0.75rem; /* Further adjusted font size */
+            color: #555;
+            cursor: pointer;
+            user-select: none;
+            gap: 4px; /* Further adjusted gap */
+        }
+
+        /* Overriding margin-left for center alignment when buttons are centered */
+        #feedback-analysis-section .form-actions .toggle-switch {
+            margin-left: 0;
+            grid-column: 3;
+            justify-self: end;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: relative;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #CCC;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 26px; /* Further adjusted border-radius */
+            width: 32px; /* Further adjusted width for slider */
+            height: 17px; /* Further adjusted height for slider */
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px; /* Further adjusted size of knob */
+            width: 12px; /* Further adjusted size of knob */
+            left: 2.5px;
+            bottom: 2.5px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #0077B6;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #0077B6;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(14px); /* Further adjusted translation */
+            -ms-transform: translateX(14px);
+            transform: translateX(14px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 26px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Initial Selection section hidden, and Input section hidden */
+        .selection-section-wrapper {
+            display: block;
+        }
+        .input-section-wrapper {
+            display: none;
+            margin-top: 0.8rem; /* Further adjusted margin */
+            padding-top: 0.8rem; /* Further adjusted padding */
+            border-top: 1px solid #EEE;
+        }
+
+        /* Work In Progress Page Style */
+        .wip-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            padding: 20px; /* Further adjusted padding */
+            background-color: #ffffff;
+            border-radius: 10px; /* Further adjusted border-radius */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            max-width: 550px; /* Further adjusted max-width */
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .wip-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.6rem; /* Further adjusted font size */
+            color: #003366;
+            margin-bottom: 8px; /* Further adjusted margin */
+        }
+
+        .wip-container p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem; /* Further adjusted font size */
+            color: #555;
+        }
+
+        /* --- Overlay for Work in Progress --- */
+        .wip-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Adjusted opacity */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(2px); /* Slightly less blur */
+            -webkit-backdrop-filter: blur(2px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .wip-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .wip-content {
+            background-color: white;
+            padding: 18px; /* Further adjusted padding */
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            position: relative;
+            transform: scale(0.995); /* Slightly less scaling */
+            transition: transform 0.3s ease;
+        }
+
+        .wip-overlay.active .wip-content {
+            transform: scale(1);
+        }
+
+        /* --- Spinning Gear Icon --- */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .wip-gear {
+            font-size: 2.5em; /* Further adjusted size */
+            color: #003366;
+            margin-bottom: 8px;
+            animation: spin 2s linear infinite;
+        }
+        /* Using inline SVG for a simple gear icon */
+        .wip-gear svg {
+            width: 1em;
+            height: 1em;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+
+        /* --- New Loading Overlay for Analysis --- */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Adjusted darker shadow for loading */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem; /* Further adjusted font size */
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-overlay p {
+            margin-top: 0.5rem; /* Further adjusted margin */
+            font-size: 0.85rem; /* Further adjusted font size */
+        }
+
+        /* Pure CSS Spinner */
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.15); /* Adjusted border */
+            border-top: 4px solid #0077B6; /* Adjusted border */
+            border-radius: 50%;
+            width: 35px; /* Further adjusted size */
+            height: 35px; /* Further adjusted size */
+            animation: spin 1s linear infinite;
+            margin-bottom: 8px;
+        }
+
+        /* Results Section (Existing styles, moved here for completeness) */
+        .results-section {
+            margin-top: 1.2rem; /* Further adjusted margin */
+            padding-top: 1.2rem; /* Further adjusted padding */
+            border-top: 1px solid #eee;
+        }
+
+        .results-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3rem; /* Further adjusted font size */
+            margin-bottom: 0.7rem; /* Further adjusted margin */
+            color: #003366;
+            text-align: center;
+        }
+
+        /* General Box Styles */
+        .box {
+            background: white;
+            padding: 0.8rem; /* Further adjusted padding */
+            border-radius: 6px; /* Further adjusted border-radius */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+            font-size: 0.8rem; /* Further adjusted font size */
+            flex: 1;
+            min-width: 200px; /* Further adjusted min-width */
+            white-space: pre-line;
+            margin-bottom: 0.8rem; /* Further adjusted margin */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .box h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.05rem; /* Increased font size for h3 within boxes */
+            color: #0056b3;
+            margin-bottom: 0.5rem; /* Further adjusted margin */
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.2rem; /* Further adjusted padding */
+        }
+
+        .box h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem; /* Further adjusted font size */
+            color: #0056b3;
+            margin-top: 0.5rem; /* Further adjusted margin */
+            margin-bottom: 0.2rem; /* Further adjusted margin */
+        }
+
+        .box p {
+            margin-bottom: 0.3rem; /* Further adjusted margin */
+        }
+
+        /* Row Layout for Boxes */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem; /* Further adjusted gap */
+            margin-bottom: 0.7rem; /* Further adjusted margin */
+        }
+
+        /* Specific Box Adjustments */
+        .result-card {
+            background: linear-gradient(135deg, #e0f2f7, #d4eaf1);
+            padding: 0.9rem; /* Further adjusted padding */
+            border-radius: 6px; /* Further adjusted border-radius */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1rem; /* Further adjusted margin */
+            color: #003366;
+        }
+
+        .result-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem; /* Further adjusted font size */
+            margin-bottom: 0.5rem; /* Further adjusted margin */
+            color: #003366;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .result-card p {
+            font-size: 0.85rem; /* Further adjusted font size */
+            margin-bottom: 0.2rem; /* Further adjusted margin */
+        }
+
+        .sentiment-box {
+            align-items: center;
+            text-align: center;
+        }
+
+        .sentiment-emoji {
+            font-size: 1.3em; /* Further adjusted font size */
+            margin-right: 0.2rem; /* Further adjusted margin */
+            vertical-align: middle;
+        }
+
+        .word-cloud-box {
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wordcloud-img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border: none;
+            border-radius: 4px; /* Further adjusted border-radius */
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        /* Word List Styling */
+        .word-category {
+            margin-bottom: 0.5rem; /* Further adjusted margin */
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px; /* Further adjusted gap */
+        }
+
+        .word-tag {
+            display: inline-block;
+            padding: 2.5px 6px; /* Further adjusted padding */
+            border-radius: 12px; /* Further adjusted border-radius */
+            font-size: 0.65em; /* Further adjusted font size */
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .word-tag.impactful {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #4CAF50;
+        }
+
+        .word-tag.negative {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #F44336;
+        }
+
+        .word-tag.neutral {
+            background-color: #fffde7;
+            color: #fbc02d;
+            border: 1px solid #FFC107;
+        }
+
+        .word-tag:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+        }
+
+        /* List Styles for Recommendations and Theme Suggestions */
+        .suggestions-list, .recommendations-list {
+            list-style-type: disc;
+            padding-left: 0.8rem; /* Further adjusted padding */
+        }
+
+        .suggestions-list li, .recommendations-list li {
+            background-color: #f8f9fa;
+            padding: 5px 8px; /* Further adjusted padding */
+            margin-bottom: 3px; /* Further adjusted margin */
+            border-radius: 3px; /* Further adjusted border-radius */
+            border-left: 2px solid #0077b6;
+            font-size: 0.75rem; /* Further adjusted font size */
+            word-wrap: break-word;
+        }
+
+        .recommendations-list li {
+            border-left-color: #28a745;
+        }
+
+        /* No data message */
+        .no-data-message {
+            font-style: italic;
+            color: #777;
+            text-align: center;
+            padding: 0.5rem; /* Further adjusted padding */
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            font-size: 0.7rem; /* Further adjusted font size */
+            padding: 0.7rem; /* Further adjusted padding */
+            background: #E9ECEF;
+            color: #6C757D;
+            margin-top: auto;
+            border-top: 1px solid #DEE2E6;
+        }
+
+        .footer p {
+            margin-bottom: 0.2rem; /* Further adjusted margin */
+        }
+
+        /* SVG Gauge Specific Styling */
+        .gauge-container {
+            width: 100%;
+            max-width: 250px; /* Increased max-width */
+            margin: 1rem auto; /* Adjusted margin */
+            text-align: center;
+            position: relative;
+        }
+
+        .gauge {
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+
+        /* Decreased font size for the score text */
+        .gauge-score-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5em; /* Increased font size */
+            font-weight: 700;
+            fill: #333;
+            transform: translateY(15px); /* Adjusted translation */
+        }
+
+        /* Benchmark marker styling */
+        .benchmark-marker {
+            fill: #6C757D;
+            font-size: 0.7em; /* Adjusted font size */
+            text-anchor: middle;
+            font-weight: 500;
+        }
+
+        /* Transition for the color arc fill */
+        #gauge-arc {
+            transition: stroke-dasharray 2s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .form-box {
+                max-width: 90vw;
+            }
+            .card-selection-container {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Further adjusted card size */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container, .main-content-container {
+                width: 95vw;
+                padding: 0 0.5rem; /* Further adjusted padding */
+            }
+
+            .header-flex {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.25rem; /* Further adjusted gap */
+            }
+
+            .header-logo {
+                height: 50px; /* Further adjusted height */
+            }
+
+            .title-main {
+                font-size: 1.2rem; /* Further adjusted font size */
+            }
+
+            .title-sub {
+                font-size: 0.75rem; /* Further adjusted font size */
+            }
+
+            .main-wrapper {
+                padding: 0.6rem 0; /* Further adjusted padding */
+            }
+
+            .form-box {
+                padding: 0.8rem; /* Further adjusted padding */
+                gap: 0.8rem; /* Further adjusted spacing */
+            }
+
+            .card-selection-container {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Further adjusted card size */
+            }
+
+            .selection-card {
+                height: 45px; /* Further adjusted height */
+                font-size: 0.7rem; /* Further adjusted font size */
+                padding: 10px 6px; /* Further adjusted padding */
+            }
+            .selection-card .fas,
+            .selection-card .fab,
+            .selection-card .far {
+                font-size: 24px; /* Adjusted Font Awesome icon size for mobile */
+                margin-bottom: 3px; /* Further adjusted margin */
+            }
+
+            .input-field {
+                min-height: 60px; /* Further adjusted min-height */
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 0.5rem; /* Further adjusted gap */
+                align-items: stretch;
+            }
+
+            .button {
+                width: 100%;
+                font-size: 0.8rem; /* Further adjusted font size */
+                padding: 6px 14px; /* Further adjusted padding */
+            }
+
+            .home-button {
+                font-size: 0.7rem; /* Further adjusted font size */
+                padding: 4px 10px; /* Further adjusted padding */
+            }
+
+            .button-analyze {
+                font-size: 0.85rem; /* Further adjusted font size */
+                padding: 7px 16px; /* Further adjusted padding */
+            }
+
+            .toggle-switch {
+                font-size: 0.7rem; /* Further adjusted font size */
+                height: 22px; /* Further adjusted height */
+                gap: 3px; /* Further adjusted gap */
+            }
+            .slider {
+                width: 28px; /* Further adjusted width */
+                height: 15px; /* Further adjusted height */
+            }
+            .slider:before {
+                height: 10px; /* Further adjusted size */
+                width: 10px; /* Further adjusted size */
+                left: 2px;
+                bottom: 2px;
+            }
+            input:checked + .slider:before {
+                transform: translateX(12px); /* Further adjusted translation */
+            }
+
+            .row {
+                flex-direction: column;
+                gap: 0.5rem; /* Further adjusted gap */
+            }
+
+            .box {
+                min-width: unset;
+                width: 100%;
+                padding: 0.6rem; /* Further adjusted padding */
+                font-size: 0.75rem; /* Further adjusted font size */
+            }
+            .box h3 {
+                font-size: 1rem; /* Adjusted h3 font size for mobile */
+            }
+            .box h4 {
+                font-size: 0.8rem; /* Further adjusted font size */
+            }
+
+            .results-section h2 {
+                font-size: 1.1rem; /* Further adjusted font size */
+            }
+
+            .result-card {
+                padding: 0.8rem; /* Further adjusted padding */
+                font-size: 0.8rem; /* Further adjusted font size */
+            }
+            .result-card h3 {
+                font-size: 1rem; /* Further adjusted font size */
+            }
+
+            .sentiment-emoji {
+                font-size: 1.2em; /* Further adjusted font size */
+            }
+
+            .word-tag {
+                font-size: 0.6em; /* Further adjusted font size */
+                padding: 2px 4px; /* Further adjusted padding */
+            }
+
+            .suggestions-list li, .recommendations-list li {
+                font-size: 0.7rem; /* Further adjusted font size */
+                padding: 4px 6px; /* Further adjusted padding */
+            }
+
+            .gauge-container {
+                max-width: 150px; /* Adjusted max-width for mobile */
+            }
+            .gauge-score-text {
+                font-size: 1em; /* Adjusted font size for mobile */
+            }
+            .benchmark-marker {
+                font-size: 0.6em; /* Adjusted font size for mobile */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-logo {
+                height: 40px; /* Further adjusted height */
+            }
+            .title-main {
+                font-size: 1rem; /* Further adjusted font size */
+            }
+            .title-sub {
+                font-size: 0.65rem; /* Further adjusted font size */
+            }
+            .form-box {
+                padding: 0.4rem; /* Further adjusted padding */
+                gap: 0.6rem; /* Further adjusted gap */
+            }
+            .form-section-label {
+                font-size: 0.9rem; /* Further adjusted font size */
+            }
+            .selection-card {
+                height: 40px; /* Further adjusted height */
+                font-size: 0.65rem; /* Further adjusted font size */
+                padding: 8px 5px; /* Further adjusted padding */
+            }
+            .selection-card .fas,
+            .selection-card .fab,
+            .selection-card .far {
+                font-size: 20px; /* Adjusted Font Awesome icon size for extra small screens */
+                margin-bottom: 2px; /* Further adjusted margin */
+            }
+            .input-field {
+                min-height: 50px; /* Further adjusted min-height */
+                font-size: 0.75rem; /* Further adjusted font size */
+            }
+            .button {
+                font-size: 0.7rem; /* Further adjusted font size */
+                padding: 5px 8px; /* Further adjusted padding */
+            }
+            .button-analyze {
+                font-size: 0.8rem; /* Further adjusted font size */
+                padding: 6px 14px; /* Further adjusted padding */
+            }
+            .toggle-switch {
+                font-size: 0.65rem; /* Further adjusted font size */
+            }
+            .box h3 {
+                font-size: 0.85rem; /* Further adjusted font size */
+            }
+            .result-card h3 {
+                font-size: 0.9rem; /* Further adjusted font size */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <div class="page-container header-container">
+            <div class="header-flex">
+                <!-- IMPORTANT: Ensure 'logo.png' is in a 'static' folder relative to your Flask app,
+                     or replace '{{ url_for('static', filename='logo.png') }}' with the direct URL/path to your logo. -->
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Aster CORE Logo" class="header-logo" />
+                <div class="header-title">
+                    <span class="title-main"> Aster CORE - Content Optimization & Response Engine </span>
+                    <span class="title-sub">Unlock actionable insights from your customer feedback with AI-powered analysis.</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        <main>
+            <div class="page-container main-content-container">
+                <div class="form-box" id="main-form-box">
+                    <form method="POST" id="mainForm">
+                        <!-- Initial Selection Section Wrapper -->
+                        <div class="selection-section-wrapper" id="initial-selection-wrapper">
+                            <h2 class="form-section-label">Welcome to Aster CORE! Let's get started.</h2>
+                            <p style="text-align: center; margin-bottom: 0.8rem; font-size: 0.85rem; color: #555;">
+                                Choose the communication channel and business unit for the content analysis.
+                            </p>
+
+                            <!-- Channel Selection Section -->
+                            <section class="selection-section">
+                                <h2 class="form-section-label">Choose your communication channel:</h2>
+                                <div class="card-selection-container" id="channel-cards">
+                                    <div class="selection-card" data-value="SMS">
+                                        <i class="fas fa-sms"></i>
+                                        SMS
+                                    </div>
+                                    <div class="selection-card" data-value="Email">
+                                        <i class="fas fa-envelope"></i>
+                                        Email
+                                    </div>
+                                    <div class="selection-card" data-value="Whatsapp">
+                                        <i class="fab fa-whatsapp"></i>
+                                        Whatsapp
+                                    </div>
+                                    <div class="selection-card" data-value="Image based Text">
+                                        <i class="fas fa-image"></i>
+                                        Image based Text
+                                    </div>
+                                </div>
+                                <!-- Hidden input to hold the selected channel value -->
+                                <input type="hidden" name="channel" id="selected-channel" value="{{ channel if channel else '' }}">
+                            </section>
+
+                            <!-- BU Selection Section -->
+                            <section class="selection-section">
+                                <h2 class="form-section-label">Select your Business Unit (BU):</h2>
+                                <div class="card-selection-container" id="bu-cards">
+                                    <div class="selection-card" data-value="Clinic">
+                                        <i class="fas fa-clinic-medical"></i>
+                                        Clinic
+                                    </div>
+                                    <div class="selection-card" data-value="Hospital">
+                                        <i class="fas fa-hospital"></i>
+                                        Hospital
+                                    </div>
+                                    <div class="selection-card" data-value="Pharmacy">
+                                        <i class="fas fa-pills"></i>
+                                        Pharmacy
+                                    </div>
+                                    <div class="selection-card" data-value="Medcare">
+                                        <i class="fas fa-heartbeat"></i>
+                                        Medcare
+                                    </div>
+                                </div>
+                                <!-- Hidden input to hold the selected BU value -->
+                                <input type="hidden" name="bu" id="selected-bu" value="{{ bu if bu else '' }}">
+                            </section>
+
+                            <div class="form-actions" style="justify-content: center;">
+                                <button type="button" class="button button-analyze" id="go-button" disabled>Continue</button>
+                            </div>
+                        </div>
+
+                        <!-- Text Input & Options Section (Initially Hidden) -->
+                        <div class="input-section-wrapper" id="feedback-analysis-section">
+                            <a href="/" class="home-button">Home</a> <!-- Added Home button -->
+                            <p class="section-label" style="text-align: left; margin-bottom: 0.6rem; font-size: 0.8rem;">
+                                Currently Selected: <span id="current-selection-display" style="font-weight: bold; color: #0077B6;"></span>
+                            </p>
+                            <textarea id="feedback" name="feedback" class="input-field" placeholder="Paste or type the input here for analysis…" required>{{ result.text if result else '' }}</textarea>
+
+                            <div class="form-actions">
+                                <div class="button-group"> <!-- New wrapper for buttons -->
+                                    <button type="button" class="button button-reset" id="reset-button">Clear Input</button>
+                                    <button type="submit" class="button button-analyze" id="analyze-button" disabled>Analyze Content</button>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="exclude_names" name="exclude_names"
+                                           {% if request.form.get('exclude_names')=='on' %}checked{% endif %}>
+                                    <span class="slider round"></span>
+                                    Exclude Personal Data
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+
+                    {% if result %}
+                    <section class="results-section" id="results-section">
+                        <h2>Analysis Results</h2>
+
+                        <div class="row">
+                            <div class="result-card" style="width: 100%;"> <!-- Adjusted to take full width within the expanded form-box -->
+                                <h3>Input Provided</h3>
+                                <p>{{ result.text }}</p>
+                                <p><strong>Character Count:</strong> {{ result.text | length }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="box sentiment-box">
+                                <h3>Overall Sentiment: <span class="sentiment-emoji">{{ result.emoji }}</span> {{ result.sentiment }}</h3>
+                                <div class="gauge-container">
+                                    <svg class="gauge" viewBox="0 0 200 100">
+                                        <path d="M 10 100 A 90 90 0 0 1 190 100" fill="none" stroke="#eee" stroke-width="20" />
+                                        <path id="gauge-arc" fill="none" stroke="url(#gaugeGradient)" stroke-width="20" />
+                                        <text x="100" y="90" text-anchor="middle" class="gauge-score-text">{{ result.score | round(1) }}%</text>
+
+                                        <g id="benchmark-group">
+                                            <line x1="100" y1="100" x2="100" y2="5" stroke="#6C757D" stroke-width="2" stroke-dasharray="2 2" />
+                                            <text x="100" y="0" class="benchmark-marker">75% Benchmark</text>
+                                        </g>
+
+                                        <defs>
+                                            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stop-color="#F44336"/>
+                                                <stop offset="49%" stop-color="#F44336"/>
+                                                <stop offset="50%" stop-color="#FFEB3B"/>
+                                                <stop offset="74%" stop-color="#FFC107"/>
+                                                <stop offset="75%" stop-color="#4CAF50"/>
+                                                <stop offset="100%" stop-color="#4CAF50"/>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="box word-cloud-box">
+                                <h3>Key Themes Visualized (Word Cloud)</h3>
+                                {% if result.cloud_img %}
+                                    <img class="wordcloud-img" src="data:image/png;base64,{{ result.cloud_img }}" alt="Word Cloud">
+                                {% else %}
+                                    <p class="no-data-message">Word cloud could not be generated.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="box key-words-box">
+                                <h3>Impactful Keywords (Positive/Action-oriented)</h3>
+                                <div class="word-category">
+                                    <div class="word-list">
+                                        {% if result.impactful %}
+                                            {% for word in result.impactful.split(', ') %}
+                                                <span class="word-tag impactful">{{ word }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="no-data-message">No impactful keywords detected.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="box">
+                                <h3>Central Theme & Actionable Suggestions</h3>
+                                {% if result.theme and result.theme_suggestions %}
+                                    <p><strong>Identified Central Theme:</strong> {{ result.theme }}</p>
+                                    <h4>Suggestions for Improvement:</h4>
+                                    <ul class="suggestions-list">
+                                        {% for tip in result.theme_suggestions %}
+                                            <li>{{ tip }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="no-data-message">Theme and suggestions are not available.</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="box">
+                                <h3>Top 3 Recommended Actions</h3>
+                                {% if result.recos and result.recos | length > 0 and result.recos[0] != "No improved recommendations found." %}
+                                    <ul class="recommendations-list">
+                                        {% for line in result.recos %}
+                                            <li>{{ line }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% elif result.recos and result.recos is string and ("Recommendation error" in result.recos or "No improved recommendations found." in result.recos) %}
+                                    <p class="no-data-message">{{ result.recos }}</p>
+                                {% else %}
+                                    <p class="no-data-message">No improved recommendations available.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="box key-words-box">
+                                <h3>Negative Keywords (Problem-related)</h3>
+                                <div class="word-category">
+                                    <div class="word-list">
+                                        {% if result.negative %}
+                                            {% for word in result.negative.split(', ') %}
+                                                <span class="word-tag negative">{{ word }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="no-data-message">No negative keywords detected.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="box key-words-box">
+                                <h3>Neutral Keywords (Descriptive)</h3>
+                                <div class="word-category">
+                                    <div class="word-list">
+                                        {% if result.neutral %}
+                                            {% for word in result.neutral.split(', ') %}
+                                                <span class="word-tag neutral">{{ word }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="no-data-message">No neutral keywords detected.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="page-container main-content-container">
+            <p>&copy; {{ date }} &nbsp;|&nbsp; Aster CORE - Content Optimization & Response Engine. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const channelCardsContainer = document.getElementById('channel-cards');
+            const buCardsContainer = document.getElementById('bu-cards');
+            const selectedChannelInput = document.getElementById('selected-channel');
+            const selectedBuInput = document.getElementById('selected-bu');
+            const goButton = document.getElementById('go-button');
+            const initialSelectionWrapper = document.getElementById('initial-selection-wrapper');
+            const feedbackAnalysisSection = document.getElementById('feedback-analysis-section');
+            const currentSelectionDisplay = document.getElementById('current-selection-display');
+            const analyzeButton = document.getElementById('analyze-button');
+            const resetButton = document.getElementById('reset-button');
+            const feedbackTextarea = document.getElementById('feedback');
+            const mainFormBox = document.getElementById('main-form-box');
+            const mainHeader = document.getElementById('main-header'); // Get the header element
+            const resultsSection = document.getElementById('results-section'); // Get the results section
+
+            // Determine if 'result' object is present based on Flask rendering
+            let isResultsPage = false;
+            // Check if resultsSection element exists in the DOM and is not hidden
+            if (resultsSection && window.getComputedStyle(resultsSection).display !== 'none') {
+                isResultsPage = true;
+            }
+
+
+            let selectedChannel = selectedChannelInput.value;
+            let selectedBu = selectedBuInput.value;
+            
+            // Function to update the Go button's disabled state
+            function updateGoButtonState() {
+                const channelSelected = selectedChannelInput.value !== '';
+                const buSelected = selectedBuInput.value !== '';
+                goButton.disabled = !(channelSelected && buSelected);
+            }
+
+            // Function to update the Analyze button's disabled state
+            function updateAnalyzeButtonState() {
+                analyzeButton.disabled = feedbackTextarea.value.trim() === '';
+            }
+
+            // Function to handle card selection
+            function handleCardClick(container, hiddenInput, type) {
+                container.addEventListener('click', function(event) {
+                    let targetCard = event.target.closest('.selection-card');
+                    if (targetCard) {
+                        // Remove 'selected' from all cards in this group
+                        Array.from(container.children).forEach(card => {
+                            card.classList.remove('selected');
+                        });
+                        // Add 'selected' to the clicked card
+                        targetCard.classList.add('selected');
+                        // Update the hidden input's value
+                        hiddenInput.value = targetCard.dataset.value;
+
+                        if (type === 'channel') {
+                            selectedChannel = targetCard.dataset.value;
+                        } else if (type === 'bu') {
+                            selectedBu = targetCard.dataset.value;
+                        }
+                        updateGoButtonState();
+                    }
+                });
+            }
+
+            // Apply card selection logic to both Channel and BU groups
+            handleCardClick(channelCardsContainer, selectedChannelInput, 'channel');
+            handleCardClick(buCardsContainer, selectedBuInput, 'bu');
+
+            // Set initial selected state if values are already present (e.g., after a form submission)
+            if (selectedChannel) {
+                const channelCard = document.querySelector(`#channel-cards .selection-card[data-value="${selectedChannel}"]`);
+                if (channelCard) channelCard.classList.add('selected');
+            }
+            if (selectedBu) {
+                const buCard = document.querySelector(`#bu-cards .selection-card[data-value="${selectedBu}"]`);
+                if (buCard) buCard.classList.add('selected');
+            }
+
+            // Function to create and show the WIP overlay
+            function showWIPOverlay() {
+                const overlay = document.createElement('div');
+                overlay.className = 'wip-overlay';
+                overlay.id = 'wip-overlay';
+
+                overlay.innerHTML = `
+                    <div class="wip-content">
+                        <div class="wip-gear">
+                             <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0
+                                0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0
+                                0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65
+                                1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09z"></path>
+                            </svg>
+                        </div>
+                        <h2>Work in Progress</h2>
+                        <p>This feature is coming soon!</p>
+                        <button type="button" class="button button-reset" id="wip-back-button" style="margin-top: 30px;">Go Back</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+
+                // Activate overlay for transition
+                setTimeout(() => {
+                    overlay.classList.add('active');
+                }, 10); // Small delay for CSS transition to work
+
+                document.getElementById('wip-back-button').addEventListener('click', () => {
+                    overlay.classList.remove('active');
+                    overlay.addEventListener('transitionend', () => {
+                        overlay.remove(); // Remove overlay after transition
+                        window.location.reload(); // Reloads the page to go back to the original state
+                    }, { once: true }); // Ensure event listener is removed after first use
+                });
+            }
+
+            // Function to create and show the Loading overlay for Analysis
+            function showLoadingOverlay() {
+                let loadingOverlay = document.getElementById('loading-overlay');
+                if (!loadingOverlay) {
+                    loadingOverlay = document.createElement('div');
+                    loadingOverlay.className = 'loading-overlay';
+                    loadingOverlay.id = 'loading-overlay';
+                    loadingOverlay.innerHTML = `
+                        <div class="loading-spinner"></div> <!-- Pure CSS spinner -->
+                        <p>Please wait while your content is being analyzed...</p>
+                    `;
+                    document.body.appendChild(loadingOverlay);
+                }
+                setTimeout(() => {
+                    loadingOverlay.classList.add('active');
+                }, 10); // Small delay to ensure transition applies
+            }
+
+            // Function to hide the Loading overlay
+            function hideLoadingOverlay() {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.classList.remove('active');
+                    loadingOverlay.addEventListener('transitionend', function handler() {
+                        loadingOverlay.remove();
+                        loadingOverlay.removeEventListener('transitionend', handler);
+                    }, { once: true });
+                }
+            }
+
+
+            // Handle the "Go" button click to reveal sections or show WIP
+            goButton.addEventListener('click', function() {
+                // The button is disabled if both are not selected, so no need for explicit check here
+                if (selectedChannel === 'Image based Text') {
+                    showWIPOverlay();
+                } else {
+                    // For any other combination, open the text area page without prompts
+                    initialSelectionWrapper.style.display = 'none';
+                    feedbackAnalysisSection.style.display = 'block';
+                    currentSelectionDisplay.textContent = `${selectedChannel} / ${selectedBu}`;
+                    mainFormBox.classList.add('expanded'); // Add expanded class
+                }
+            });
+
+            // Handle Reset button click
+            resetButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default form submission/page reload
+
+                // Clear text area content
+                feedbackTextarea.value = '';
+                updateAnalyzeButtonState(); // Disable analyze button if textarea is empty
+
+                // Keep the feedback analysis section open (do not go back to landing page)
+                // The channel and BU selections remain as they were before reset.
+            });
+
+            // Handle Analyze button click (now with loading spinner logic)
+            let loadingTimeout;
+            analyzeButton.addEventListener('click', function(event) {
+                // Prevent default form submission initially
+                event.preventDefault();
+
+                // Show spinner after 1 second if analysis takes time
+                loadingTimeout = setTimeout(() => {
+                    showLoadingOverlay();
+                }, 1000); // 1 second delay
+
+                // Manually submit the form after a very short delay (to allow timeout to be set)
+                // This will cause a page reload, and the DCL handler will then hide the loader.
+                setTimeout(() => {
+                    mainForm.submit();
+                }, 100);
+            });
+
+
+            // Listen for input in textarea to enable/disable analyze button
+            feedbackTextarea.addEventListener('input', updateAnalyzeButtonState);
+
+            // Initial state check on page load
+            if (selectedChannel && selectedBu) {
+                if (selectedChannel === 'Image based Text') {
+                    showWIPOverlay();
+                } else {
+                    // For other combinations, show the feedback analysis section
+                    initialSelectionWrapper.style.display = 'none';
+                    feedbackAnalysisSection.style.display = 'block';
+                    currentSelectionDisplay.textContent = `${selectedChannel} / ${selectedBu}`;
+                    updateAnalyzeButtonState(); // Update analyze button state based on pre-filled text
+                    mainFormBox.classList.add('expanded'); // Add expanded class on load if applicable
+                }
+            } else {
+                // If no pre-selected values, ensure Go button is correctly disabled/enabled
+                updateGoButtonState();
+            }
+
+            // Scroll event listener for header shadow effect
+            window.addEventListener('scroll', function() {
+                // Only apply shadow effect if we are on the results page (third page)
+                // This is determined by checking if the 'resultsSection' element is actually visible.
+                const isCurrentlyResultsPage = resultsSection && window.getComputedStyle(resultsSection).display !== 'none';
+
+                if (isCurrentlyResultsPage) {
+                    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const scrollThreshold = 50; // Distance from top to activate shadow
+
+                    if (currentScrollTop > scrollThreshold) {
+                        mainHeader.classList.add('header-scrolled');
+                    } else {
+                        mainHeader.classList.remove('header-scrolled');
+                    }
+                } else {
+                    // Ensure header shadow is off if not on the results page
+                    mainHeader.classList.remove('header-scrolled');
+                }
+            });
+
+
+            // Also check for existing results to show analysis section
+            if (isResultsPage) {
+                // If we are on the results page, and a loadingTimeout was set (meaning it was a long load), hide it.
+                // If the page loaded quickly, loadingTimeout wouldn't have triggered showLoadingOverlay, so no need to hide.
+                hideLoadingOverlay(); // Ensure any loading overlay is hidden when results are displayed
+
+                initialSelectionWrapper.style.display = 'none';
+                feedbackAnalysisSection.style.display = 'block';
+                currentSelectionDisplay.textContent = `{{ channel if channel else '' }} / {{ bu if bu else '' }}`;
+                updateAnalyzeButtonState();
+                mainFormBox.classList.add('expanded'); // Add expanded class if results are present
+
+                // Gauge animation logic
+                const score = parseFloat("{{ result.score | default(0) }}");
+                const gaugeArc = document.getElementById("gauge-arc");
+                const benchmarkGroup = document.getElementById("benchmark-group");
+
+                const arcLength = Math.PI * 90; // Circumference = 2 * PI * r, so semi-circle = PI * r
+                const fillLength = (score / 100) * arcLength;
+
+                // Ensure the path 'd' attribute is set initially before animation
+                gaugeArc.setAttribute("d", "M 10 100 A 90 90 0 0 1 190 100");
+                gaugeArc.setAttribute("stroke-dasharray", `0 ${arcLength}`);
+                setTimeout(() => {
+                    gaugeArc.setAttribute("stroke-dasharray", `${fillLength} ${arcLength - fillLength}`);
+                }, 100);
+
+                const benchmarkScore = 75;
+                const benchmarkAngle = (benchmarkScore * 1.8) - 90;
+
+                if (benchmarkGroup) {
+                    benchmarkGroup.setAttribute("transform", `rotate(${benchmarkAngle} 100 100)`);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

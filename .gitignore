@@ -1,0 +1,40 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# Jupyter/IPython
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Python dotenv
+.env
+
+# NLTK / Transformers cache
+nltk_data/
+transformers_cache/
+__cache__/
+*.cache
+*.log
+
+# Flask
+instance/
+*.db
+*.sqlite3
+
+# Pytest
+.pytest_cache/
